@@ -360,9 +360,11 @@
     /* Nav — hamburger */
     .hamburger{display:flex}
     .topbar-inner{grid-template-columns:auto 1fr auto;gap:8px;padding:12px 16px;position:relative}
-    .nav-left,.nav-right{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--brown-3);z-index:55;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:80px 24px 40px}
-    .nav-left.open,.nav-right.open{display:flex}
+    .nav-left{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--brown-3);z-index:55;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:80px 24px 40px}
+    .nav-left.open{display:flex}
+    .nav-right{display:none !important}
     .nav-link{font-size:16px;letter-spacing:.18em;padding:12px 0}
+    .nav-link-mobile-only{display:flex}
     .brand{font-size:20px;letter-spacing:.2em}
     .brand small{font-size:11px}
     .icon-btn{width:30px;height:30px}
@@ -390,12 +392,15 @@
     /* Menu */
     .menu-hero{padding:50px 0 36px}
     .menu-grid{grid-template-columns:1fr;gap:0;padding:40px 0}
+    .pkg-list{padding:0 16px}
     .pkg{grid-template-columns:46px 1fr;gap:10px;padding:20px 0}
     .pkg .pkg-num{font-size:28px}
     .pkg-name{font-size:20px}
     .pkg-price,.pkg-add{grid-column:2}
     .pkg-add{padding:10px 14px;font-size:10px}
     .cart-panel{position:static;margin-top:0;padding:28px 20px}
+    .picker-cats{flex-wrap:nowrap}
+    .pcat{padding:14px 18px;font-size:10px;letter-spacing:.12em;flex-shrink:0}
 
     /* Orders */
     .orders-section{padding:50px 0}
@@ -416,7 +421,9 @@
     .builder-body{padding:36px 0 50px}
     .builder-card{padding:24px 16px;max-width:100%}
     .builder-card h2{font-size:26px}
-    .room-opt,.equip-opt{padding:14px 14px;gap:12px}
+    .room-opt{grid-template-columns:auto 1fr;gap:12px;padding:14px 14px;flex-wrap:wrap}
+    .room-opt .pkg-price{grid-column:1/-1;font-size:16px;padding-left:32px}
+    .equip-opt{padding:14px 14px;gap:12px}
     .price-display{padding:20px 18px;flex-direction:column;gap:8px}
     .price-display .price{font-size:32px}
     .builder-nav{flex-direction:column-reverse;gap:10px}
@@ -700,11 +707,19 @@ function Header({ route, go, user }) {
   const { items } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const itemCount = items.reduce((s, p) => s + p.qty, 0);
-  const links = [
+  const desktopLinks = [
   { id: 'about', label: 'О нас' },
   { id: 'menu', label: 'Онлайн-меню' },
   { id: 'booking', label: 'Бронирование' },
   { id: 'builder', label: 'Конструктор мероприятий' }];
+
+  const allLinks = [
+  { id: 'about', label: 'О нас' },
+  { id: 'menu', label: 'Онлайн-меню' },
+  { id: 'booking', label: 'Бронирование' },
+  { id: 'builder', label: 'Конструктор мероприятий' },
+  { id: 'contacts', label: 'Контакты' },
+  { id: 'account', label: 'Личный кабинет' }];
 
   const nav = (id) => { go(id); setMenuOpen(false); };
 
@@ -714,16 +729,23 @@ function Header({ route, go, user }) {
         <button className={"hamburger" + (menuOpen ? ' open' : '')} onClick={() => setMenuOpen(!menuOpen)} aria-label="меню">
           <span/><span/><span/>
         </button>
-        <nav className={"nav-left" + (menuOpen ? ' open' : '')}>
-          {links.map((l) =>
+        {/* Desktop nav */}
+        <nav className="nav-left" style={{}}>
+          {desktopLinks.map((l) =>
           <button key={l.id} className={"nav-link" + (route === l.id ? " active" : "")} onClick={() => nav(l.id)}>{l.label}</button>
           )}
         </nav>
+        {/* Mobile full-screen menu */}
+        {menuOpen && <nav className="nav-left open">
+          {allLinks.map((l) =>
+          <button key={l.id} className={"nav-link" + (route === l.id ? " active" : "")} onClick={() => nav(l.id)}>{l.label}</button>
+          )}
+        </nav>}
         <div className="brand" onClick={() => nav('about')}>
           КАФРЕСС
           <small style={{ fontFamily: "\"Cormorant Garamond\"" }}>event-ресторан</small>
         </div>
-        <div className={"nav-right" + (menuOpen ? ' open' : '')}>
+        <div className="nav-right">
           <button className={"nav-link" + (route === 'contacts' ? " active" : "")} onClick={() => nav('contacts')}>Контакты</button>
           <button className="icon-btn cart-pill" onClick={() => nav('menu')} title="Корзина">
             <IconCart />
@@ -2095,6 +2117,7 @@ function Footer({ go }) {
             <li><a onClick={() => go('menu')} style={{ cursor: 'pointer' }}>Онлайн-меню</a></li>
             <li><a onClick={() => go('booking')} style={{ cursor: 'pointer' }}>Бронирование</a></li>
             <li><a onClick={() => go('builder')} style={{ cursor: 'pointer' }}>Конструктор</a></li>
+            <li><a onClick={() => go('account')} style={{ cursor: 'pointer' }}>Личный кабинет</a></li>
           </ul>
         </div>
         <div>
