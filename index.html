@@ -455,8 +455,15 @@
     .loy-card{padding:24px 20px;grid-template-columns:1fr}
     .loy-card .points{font-size:48px}
     .loy-perks{grid-template-columns:1fr}
-    .msg-wrap{grid-template-columns:1fr;min-height:400px}
-    .chat-list{border-right:none;border-bottom:1px solid var(--line-dark)}
+    .msg-wrap{grid-template-columns:1fr;min-height:unset}
+    .chat-list{border-right:none;border-bottom:1px solid var(--line-dark);max-height:180px;overflow-y:auto}
+    .chat-pane{min-height:260px}
+    .loy-card .tier{font-size:26px}
+    .loy-card .points{font-size:40px}
+    .loy-perks .perk{padding:16px 14px}
+    .news-item{grid-template-columns:1fr;gap:4px;padding:16px 14px}
+    .news-item .date{margin-bottom:4px}
+    .order-card{padding:16px 14px !important}
 
     /* Modals */
     .modal-bg{padding:0;align-items:flex-end}
@@ -2015,7 +2022,7 @@ function AccountPage({ user, setUser }) {
             const STATUSES = [{ k: 'accepted', l: 'Принят' }, { k: 'preparing', l: 'Готовится' }, { k: 'ontable', l: 'На столе' }, { k: 'closed', l: 'Счёт закрыт' }];
             const cur = STATUSES.findIndex((s) => s.k === o.status);
             return (
-              <div key={o.id} className="order-card" style={{ display: 'block', padding: '24px 28px' }}>
+              <div key={o.id} className="order-card" style={{ display: 'block' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 14 }}>
                     <div>
                       <div className="mono" style={{ fontSize: 11, color: '#7A7A45', letterSpacing: '.16em' }}>#{o.id} · {o.date || '—'} · {o.when}</div>
