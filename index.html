@@ -447,9 +447,10 @@
     .dash-side .who{padding:14px 0}
     .who .av{width:44px;height:44px;font-size:18px}
     .dash-side{display:none}
-    .dash-tabs-mobile{display:flex !important;overflow-x:auto;gap:0;border-bottom:1px solid var(--line-dark);-webkit-overflow-scrolling:touch;background:var(--cream)}
-    .dash-tabs-mobile .dash-tab{white-space:nowrap;border-left:none;border-bottom:2px solid transparent;padding:12px 14px;font-size:9px;color:var(--grey)}
+    .dash-tabs-mobile{display:flex !important;gap:0;border-bottom:1px solid var(--line-dark);background:var(--cream)}
+    .dash-tabs-mobile .dash-tab{flex:1;min-width:0;white-space:nowrap;border-left:none;border-bottom:2px solid transparent;padding:10px 2px;font-size:8px;letter-spacing:.06em;color:var(--grey);text-align:center;overflow:hidden;text-overflow:ellipsis}
     .dash-tabs-mobile .dash-tab.active{color:var(--brown);border-bottom-color:var(--olive);border-left:none;background:rgba(122,122,69,.08)}
+    .dash-tabs-mobile .dash-tab-exit{flex:0 0 auto;font-size:8px;padding:10px 8px;color:rgba(0,0,0,.4)}
     .dash-main{padding:28px 16px}
     .dash-main h2{font-size:28px;margin-bottom:20px}
     .loy-card{padding:24px 20px;grid-template-columns:1fr}
@@ -1934,11 +1935,11 @@ function AccountPage({ user, setUser }) {
 
   const initials = user.full.split(' ').map((s) => s[0]).join('');
   const TABS = [
-  { id: 'loyalty', l: 'Лояльность' },
-  { id: 'profile', l: 'Профиль' },
-  { id: 'history', l: 'История посещений' },
-  { id: 'news', l: 'Лента' },
-  { id: 'msg', l: 'Мессенджер' }];
+  { id: 'loyalty', l: 'Лояльность', m: 'Баллы' },
+  { id: 'profile', l: 'Профиль', m: 'Профиль' },
+  { id: 'history', l: 'История посещений', m: 'История' },
+  { id: 'news', l: 'Лента', m: 'Лента' },
+  { id: 'msg', l: 'Мессенджер', m: 'Чаты' }];
 
 
   const sendMsg = () => {
@@ -1965,11 +1966,11 @@ function AccountPage({ user, setUser }) {
 
       <main className="dash-main">
         {/* Mobile tabs */}
-        <div className="dash-tabs-mobile" style={{ display: 'none', marginBottom: 24, marginLeft: -16, marginRight: -16, paddingLeft: 16 }}>
+        <div className="dash-tabs-mobile" style={{ display: 'none', marginBottom: 24, marginLeft: -16, marginRight: -16 }}>
           {TABS.map((t) =>
-          <button key={t.id} className={"dash-tab " + (tab === t.id ? 'active' : '')} onClick={() => setTab(t.id)}>{t.l}</button>
+          <button key={t.id} className={"dash-tab " + (tab === t.id ? 'active' : '')} onClick={() => setTab(t.id)}>{t.m}</button>
           )}
-          <button className="dash-tab" onClick={() => setUser(null)} style={{ color: 'rgba(0,0,0,.4)' }}>Выйти</button>
+          <button className="dash-tab dash-tab-exit" onClick={() => setUser(null)}>Выйти</button>
         </div>
         {tab === 'loyalty' &&
         <>
