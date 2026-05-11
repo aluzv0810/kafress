@@ -1680,10 +1680,21 @@ function ContactsPage() {
 
 // ============== ACCOUNT (login + dashboard) ==============
 // Simulated account database (resets on reload)
-const ACCOUNTS_DB = window.__accountsDB || (window.__accountsDB = {
-  // pre-seed one demo account
+const _ACCS_DEFAULTS = {
   'demo@kafress.ru': { pass: 'demo1234', full: 'Иван Петров', company: 'ООО «Стратегия»', position: 'CEO', phone: '+7 921 555-12-34', emailContact: 'ivan@strategy.ru', loyalty: 2480 }
-});
+};
+const _ACCS_STORED = (() => { try { return JSON.parse(localStorage.getItem('kafress_accounts') || 'null'); } catch(e) { return null; } })();
+const ACCOUNTS_DB = window.__accountsDB || (window.__accountsDB = Object.assign({}, _ACCS_DEFAULTS, _ACCS_STORED || {}));
+
+function persistAccounts() {
+  try {
+    const snap = {};
+    Object.entries(ACCOUNTS_DB).forEach(([k, v]) => {
+      snap[k] = { pass: v.pass, full: v.full, company: v.company, position: v.position, phone: v.phone || '', emailContact: v.emailContact || '', loyalty: v.loyalty || 0 };
+    });
+    localStorage.setItem('kafress_accounts', JSON.stringify(snap));
+  } catch(e) {}
+}
 
 function RegisterModal({ onClose, onRegistered, openRecover }) {
   const [stage, setStage] = useState2('form'); // form | code | exists
@@ -1718,6 +1729,7 @@ function RegisterModal({ onClose, onRegistered, openRecover }) {
     if (code.trim() !== sentCode) {setCodeErr('Неверный код. Попробуйте ещё раз.');return;}
     // create account
     ACCOUNTS_DB[email.toLowerCase()] = { pass, full: 'Новый пользователь', company: '—', position: '—', loyalty: 0 };
+    persistAccounts();
     onRegistered(email.toLowerCase());
   };
 
@@ -1803,6 +1815,7 @@ function RecoverModal({ initialEmail, onClose, onDone }) {
     if (newPass.length < 8) {setErr('Пароль должен быть не менее 8 символов');return;}
     if (newPass !== newPass2) {setErr('Пароли не совпадают');return;}
     ACCOUNTS_DB[email.toLowerCase()].pass = newPass;
+    persistAccounts();
     onDone(email.toLowerCase());
   };
 
@@ -1880,6 +1893,7 @@ function AccountPage({ user, setUser }) {
       acc.position = profile.position;
       acc.phone = profile.phone;
       acc.emailContact = profile.emailContact;
+      persistAccounts();
     }
     setUser({ ...user, full: profile.full, company: profile.company, position: profile.position });
     setProfileSaved(true);
